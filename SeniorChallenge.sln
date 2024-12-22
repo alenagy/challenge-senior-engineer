@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApi", "TodoApi\TodoApi.csproj", "{898E58ED-9423-44C8-8D23-AEB08BE187CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApi.Tests", "TodoApi.Tests\TodoApi.Tests.csproj", "{00043A0D-7E9B-4A37-9FD6-E6D2FACCB115}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncQueueWorker", "SyncQueueWorker\SyncQueueWorker.csproj", "{3AD2C661-6637-4A8D-B987-117189493DC4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{898E58ED-9423-44C8-8D23-AEB08BE187CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{898E58ED-9423-44C8-8D23-AEB08BE187CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{898E58ED-9423-44C8-8D23-AEB08BE187CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{898E58ED-9423-44C8-8D23-AEB08BE187CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00043A0D-7E9B-4A37-9FD6-E6D2FACCB115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00043A0D-7E9B-4A37-9FD6-E6D2FACCB115}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00043A0D-7E9B-4A37-9FD6-E6D2FACCB115}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00043A0D-7E9B-4A37-9FD6-E6D2FACCB115}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD2C661-6637-4A8D-B987-117189493DC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD2C661-6637-4A8D-B987-117189493DC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD2C661-6637-4A8D-B987-117189493DC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD2C661-6637-4A8D-B987-117189493DC4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

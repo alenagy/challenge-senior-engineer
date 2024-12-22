@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/dotnet:8.0
+    command: sleep infinity
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    volumes:
+      - ..:/app
+  syncqueueworker:
+    build:
+      context: ../SyncQueueWorker
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+    volumes:
+      - .:/workspace
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ messaging port
+      - "15672:15672" # RabbitMQ Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password123
+      - SA_PASSWORD=Password123
