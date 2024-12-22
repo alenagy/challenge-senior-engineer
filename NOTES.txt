@@ -1,0 +1,49 @@
+What you see implemented is the most I could do in the time I could dedicate to this task. It is likely that not everything
+described in this text is implemented in code.
+
+I have added LastUpdated (timestamp) and UID (guid) to the models to aid in the synchronization implementation. UID will be
+database agnostic so can be shared across both APIs to uniquely identify records. LastUpdated will dictate if the update needs
+to be performed or not.
+What the rules are for synchronization from the external api are not clear in the exercise (do we need live updates or what frequency?).
+Because the external API has a timestamp for creation and update we can use this as the rule for selection on which record
+overrides which. When a perfect match is found a decision would have to be made, as a business rule, on which one would
+have priority. I will assume our local API does.
+I will also add a new Controller to our existing API to simulate the external API, along with corresponding external models
+so we can test sync in both directions.
+
+The DbContext and models were extracted to a library to share with the workers.
+
+Plan on how to solve two way sync with external API:
+
+Local to External:
+Use a message queue (in this case RabbitMQ) to push messages to a queue with every add/update/delete from our local API.
+    We use an interceptor to generate a message and push it to the queue on every add/update/delete
+    Depending on business rules this can either be done in a transaction and rollback if the queue fails, or not (priority on
+    sync, on local api, or whatever the business rules might dictate)
+Use a background worker to process the messages in the queue to push changes to the external API
+    The background process would have to convert between local and external. Example: There is no add item on the external API
+    so you're forced to delete the list from the external api and re-create it with all items + the new item.
+    Since we're syncing both ways it would probably be update the remote list with a new id, store it and delete that later
+    Also check if the record already exists for an update vs an insert etc.
+
+External to Local:
+I don't see anything in the external documentation that suggests webhooks are a possibility, and assuming we have no control
+over it and can't request anything from them, our only remaining option is polling data from the API.
+If we could request webhooks, we would have a similar behaviour to a queue, where we can have webhooks for Add/Update/Delete
+and process those messages individually.
+Given the fact that we don't, and there's no information on requirements for continuous updates, a worker will have to fetch
+all data from the external API periodically.
+We will use a LastSyncProcess model with a timestamp on the latest date and time the sync process was successfully completed.
+Any records on the external API that will be checked must have the creation or updated timestamp >= to said last sync timestamp.
+Polling on a large dataset, even when optimized with a timestamp, is a less than optimal solution, but in this case its the only
+one available as per the external API documentation.
+The GET /todolists method on the external API doesn't support filtering, so all lists will be pulled each time the sync runs. With
+large datasets this could mean timeouts, excesive use of memory or other issues that would make the sync fail. Its not clear to
+me if the external API supports streaming, but even if it doesn't, considering it could be thousands of records it would be best
+to save these locally. Its data duplication, but its safer. Push all data to a local database or specific tables in the same database
+reserved for the sync data. Then we can fire threads to filter data by timestamps, apply the corresponding action and clear that data
+for the next sync.
+Regardless of what we do, there's an unavoidable limitation in our capacity. If the external dataset grows beyond what
+can be transmitted in a request, our memory, or the time it can keep the request alive, it will fail and there's nothing we can do.
+Without the capacity to limit the data we query, or use chunks of data at a time, we can't prevent this from happening.
+

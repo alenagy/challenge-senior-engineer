@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using Data.Models;
+
+namespace Data;
 
 public class TodoContext : DbContext
 {
@@ -9,4 +11,6 @@ public class TodoContext : DbContext
     public DbSet<TodoList> TodoList { get; set; } = default!;
 
     public DbSet<TodoItem> TodoItems { get; set; } = default!;
+
+    public DbSet<LastSyncProcess> LastSyncProcess { get; set; } = default!;
 }

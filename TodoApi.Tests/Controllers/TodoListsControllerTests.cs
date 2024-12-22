@@ -1,7 +1,8 @@
+using Data;
+using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Controllers;
-using TodoApi.Models;
 
 namespace TodoApi.Tests;
 

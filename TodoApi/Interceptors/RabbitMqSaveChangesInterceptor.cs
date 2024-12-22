@@ -2,6 +2,8 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace TodoApi.Interceptors;
+
 public class RabbitMqSaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly RabbitMqService _rabbitMqService;

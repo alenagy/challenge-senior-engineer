@@ -1,19 +1,29 @@
+using Data.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using TodoApi.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<RabbitMqService>();
-
-builder
-    .Services.AddDbContext<TodoContext>(async (serviceProvider, opt) => {
-        opt.UseSqlServer(builder.Configuration.GetConnectionString("TodoContext"));
-        var rabbitMqService = serviceProvider.GetRequiredService<RabbitMqService>();
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var rabbitMqService = new RabbitMqService();
+    Task.Run(async () => {
         await rabbitMqService.InitializeAsync();
-        var interceptor = new RabbitMqSaveChangesInterceptor(rabbitMqService);
-        opt.AddInterceptors(interceptor);
-    })
-    .AddEndpointsApiExplorer()
-    .AddControllers();
+    }).GetAwaiter().GetResult();
+    return rabbitMqService;
+});
+
+builder.Services.AddDbContextWithInterceptors(serviceProvider =>
+{
+    var rabbitMqService = serviceProvider.GetRequiredService<RabbitMqService>();
+    return new List<IInterceptor>
+    {
+        new RabbitMqSaveChangesInterceptor(rabbitMqService)
+    };
+})
+.AddEndpointsApiExplorer()
+.AddControllers();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
